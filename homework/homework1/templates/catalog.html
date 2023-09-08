@@ -5,7 +5,7 @@
 
 {% block content %}
 <h1>Каталог товаров</h1>
-    {% for i in list%}
+    {% for name, link in list%}
     <li><a href="{{ link }}">"{{ name }}"</a></li>
     {% endfor %}
 {% endblock %}
