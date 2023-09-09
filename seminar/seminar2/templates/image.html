@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Ваша картинка</title>
+{% endblock %}
+{% block content %}
+<img src="{{ file_name }}" alt="Изображение загружено" width="300">
+<input type="submit" value="Нажми меня">
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block slider %}
+{% endblock %}
+
+{% block sidemenu %}
+{% endblock %}
+
+{% block content %}
+<div class="about">
+     <div class="container">
+         <form action="/math" method="post">
+            <input type="number" name="num1" placeholder="Число 1">
+                 <select name="operation">
+                     <option selected value="plus">+</option>
+                     <option selected value="minus">-</option>
+                     <option selected value="mult">*</option>
+                     <option selected value="div">/</option>
+                 </select>
+            <input type="number" name="num2" placeholder="Число 2">
+            <input type="submit" value="Вычислить">
+         </form>
+     </div>
+</div>
+{% endblock %}

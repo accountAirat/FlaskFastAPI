@@ -9,7 +9,7 @@ def index():
         'title': 'Главная',
         'name': 'Харитон'
     }
-    response = make_response(render_template('main.html', **context))
+    response = make_response(render_template('index.html', **context))
     response.headers['new_head'] = 'New value'
     response.set_cookie('username', context['name'])
     return response
