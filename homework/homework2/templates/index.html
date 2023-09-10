@@ -1,0 +1,11 @@
+{%  extends 'base.html' %}
+
+
+{% block title %} Главная страница {% endblock %}
+
+{% block content %}
+<h1>Привет, {{ name }}</h1>
+<a href="{{ url_for('logout') }}">Выйти</a>
+{% endblock %}
+
+
