@@ -1,9 +1,16 @@
-from flask import Flask, render_template
-from lesson.lesson3.models import db, User, Post, Comment
+from flask import Flask, render_template, jsonify, request
+from .models import db, User, Post, Comment
+from datetime import datetime, timedelta
+from .forms import LoginForm, RegistrationForm
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
 db.init_app(app)
+
+app.config['SECRET_KEY'] = 'mysecretkey'
+csrf = CSRFProtect(app)
 
 '''
 MySQL
@@ -59,9 +66,57 @@ def fill_tables():
 @app.route('/users/')
 def all_users():
     users = User.query.all()
-    print(users)
-    # context = {'users': users}
-    # return render_template('users.html', **context)
+    context = {'users': users}
+    return render_template('users.html', **context)
+
+
+@app.route('/users/<username>/')
+def users_by_username(username):
+    users = User.query.filter(User.username == username).all()
+    context = {'users': users}
+    return render_template('users.html', **context)
+
+
+@app.route('/posts/author/<int:user_id>/')
+def get_posts_by_author(user_id):
+    posts = Post.query.filter_by(author_id=user_id).all()
+    if posts:
+        return jsonify([{'id': post.id, 'title': post.title, 'content': post.content, 'created_at': post.created_at}
+                        for post in posts])
+    else:
+        return jsonify({'error': 'Posts not found'})
+
+
+@app.route('/posts/last-week/')
+def get_posts_last_week():
+    date = datetime.utcnow() - timedelta(days=7)
+    posts = Post.query.filter(Post.created_at >= date).all()
+    if posts:
+        return jsonify([{'id': post.id, 'title': post.title, 'content': post.content, 'created_at': post.created_at}
+                        for post in posts])
+    else:
+        return jsonify({'error': 'Posts not found'})
+
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if request.method == 'POST' and form.validate():
+        # Обработка данных из формы
+        pass
+    return render_template('login.html', form=form)
+
+
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if request.method == 'POST' and form.validate():
+        # Обработка данных из формы
+        email = form.email.data
+        password = form.password.data
+        print(email, password)
+        ...
+    return render_template('register.html', form=form)
 
 
 if __name__ == '__main__':
