@@ -1,7 +1,6 @@
 from fastapi import FastAPI
-from werkzeug.security import generate_password_hash, check_password_hash
 from typing import List
-from models import *
+from models import products, Product, ProductIn, database
 
 app = FastAPI()
 
@@ -10,7 +9,7 @@ app = FastAPI()
 async def create_product(product: ProductIn):
     query = products.insert().values(product_name=product.product_name, description=product.description, price=product.price)
     last_record_id = await database.execute(query)
-    return {**product.dict(), "pid": last_record_id}
+    return {**product.model_dump(), "pid": last_record_id}
 
 
 @app.get("/", response_model=List[Product])
@@ -29,7 +28,7 @@ async def read_product(pid: int):
 async def update_product(pid: int, new_product: ProductIn):
     query = products.update().where(products.c.pid == pid).values(**new_product.dict())
     await database.execute(query)
-    return {**new_product.dict(), "pid": pid}
+    return {**new_product.model_dump(), "pid": pid}
 
 
 @app.delete("/{pid}")

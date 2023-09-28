@@ -1,5 +1,5 @@
-from datetime import datetime
 from enum import Enum
+from datetime import datetime as dt
 
 import sqlalchemy
 import databases
@@ -30,7 +30,8 @@ orders = sqlalchemy.Table("orders", metadata,
                           sqlalchemy.Column("oid", sqlalchemy.Integer, primary_key=True),
                           sqlalchemy.Column("uid", sqlalchemy.Integer, sqlalchemy.ForeignKey('users.uid')),
                           sqlalchemy.Column("pid", sqlalchemy.Integer, sqlalchemy.ForeignKey('products.pid')),
-                          sqlalchemy.Column("date", sqlalchemy.DateTime(), default=datetime.now),
+                          sqlalchemy.Column("date", sqlalchemy.DateTime),
+                          sqlalchemy.Column("status", sqlalchemy.String(16)),
                           )
 
 engine = sqlalchemy.create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -66,12 +67,11 @@ class OrderStatusEnum(str, Enum):
 class OrderIn(BaseModel):
     uid: int
     pid: int
+    date: Optional[dt] = None
+    status: Optional[OrderStatusEnum] = None
 
 
-class Order(BaseModel):
+class Order(OrderIn):
     oid: int
-    product: Product
-    user: User
-    date: datetime
-    status: OrderStatusEnum = OrderStatusEnum.create
+
 
